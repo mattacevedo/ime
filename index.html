@@ -509,6 +509,7 @@
       nav { display: none; }
     }
   </style>
+  <script type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
 </head>
 <body>
 
@@ -739,8 +740,8 @@
       <span class="label" style="margin-bottom:0;">Live Demo: Try It</span>
     </div>
     <h2 class="fade-up">Chat with Samantha</h2>
-    <div class="demo-iframe-wrap fade-up">
-      <iframe src="https://tal707-samantha.zapier.app/" title="Samantha Williams" allow="clipboard-write"></iframe>
+    <div class="demo-iframe-wrap fade-up" style="height: auto; background: transparent; border: none;">
+      <zapier-interfaces-page-embed page-id='clxmbykw6000eljhczj00a6ci' test-id='clxmbykw6000eljhczj00a6ci-zapier-interfaces-page-embed-iframe' no-background='false' style='max-width: 900px; height: 620px; width: 100%; display: block;'></zapier-interfaces-page-embed>
     </div>
   </div>
 </section>
