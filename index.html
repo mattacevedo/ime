@@ -55,6 +55,59 @@
     }
     .nav-dot.active, .nav-dot:hover { background: var(--accent); transform: scale(1.5); }
 
+    /* SECTION INDICATOR */
+    #section-indicator {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(17,24,39,0.82);
+      border: 1px solid rgba(56,189,248,0.18);
+      border-radius: 20px;
+      padding: 7px 14px 7px 10px;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    #section-indicator.hidden {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .si-arrow {
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .si-arrow svg { display: block; }
+    .si-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .si-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .si-sep {
+      width: 1px; height: 14px;
+      background: rgba(255,255,255,0.12);
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) { #section-indicator { display: none; } }
+
     /* SECTIONS */
     section {
       min-height: 100vh;
@@ -525,6 +578,13 @@
   <div class="nav-dot" data-target="contact"></div>
 </nav>
 
+<div id="section-indicator" class="hidden">
+  <span class="si-arrow"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3.5 8.5 7 12l3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  <span class="si-label">Next</span>
+  <span class="si-sep"></span>
+  <span class="si-title" id="si-title-text"></span>
+</div>
+
 <!-- 1. HERO -->
 <section id="hero">
   <div class="section-inner">
@@ -856,7 +916,23 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // NAV DOTS
+  // NAV DOTS + SECTION INDICATOR
+  const sectionTitles = {
+    hero:       'The Course',
+    background: 'Teaching Instructional Design',
+    skills:     'Workable, but Less Than Ideal',
+    problem:    'The Prior Approach',
+    prior:      'The Idea',
+    insight:    'Fully Realized Expert Personas',
+    sme:        'Chat with Samantha',
+    demo:       'Building the Chatbot',
+    howto:      'Student Perceptions',
+    data:       'Thanks!',
+    contact:    null,
+  };
+  const indicator = document.getElementById('section-indicator');
+  const indicatorText = document.getElementById('si-title-text');
+
   const dots = document.querySelectorAll('.nav-dot');
   dots.forEach(d => {
     d.addEventListener('click', () => document.getElementById(d.dataset.target)?.scrollIntoView({ behavior: 'smooth' }));
@@ -866,6 +942,13 @@
       if (e.isIntersecting) {
         dots.forEach(d => d.classList.remove('active'));
         document.querySelector(`.nav-dot[data-target="${e.target.id}"]`)?.classList.add('active');
+        const next = sectionTitles[e.target.id];
+        if (next) {
+          indicatorText.textContent = next;
+          indicator.classList.remove('hidden');
+        } else {
+          indicator.classList.add('hidden');
+        }
       }
     });
   }, { threshold: 0.5 });
