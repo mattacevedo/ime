@@ -471,6 +471,19 @@
 
     /* ── HOW IT WORKS ── */
     #howto { background: var(--bg-dark); }
+    .howto-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .terminal-window { background: #0d1117; border-radius: 12px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.6); }
+    .terminal-bar { background: #21262d; padding: 12px 16px; display: flex; align-items: center; gap: 7px; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .term-dot.td-red { background: #ff5f57; }
+    .term-dot.td-yellow { background: #febc2e; }
+    .term-dot.td-green { background: #28c840; }
+    .term-title { margin-left: 6px; color: #8b949e; font-size: 12px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+    .terminal-body { padding: 20px 22px; height: 420px; overflow-y: auto; color: #4ade80; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; scrollbar-width: thin; scrollbar-color: #2a2a2a transparent; }
+    .terminal-body::-webkit-scrollbar { width: 4px; }
+    .terminal-body::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
+    .term-cursor { display: inline-block; width: 8px; height: 1.1em; background: #4ade80; vertical-align: text-bottom; animation: blink-cur 1s step-end infinite; }
+    @keyframes blink-cur { 0%,100% { opacity:1; } 50% { opacity:0; } }
     .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 36px; }
     .step {
       background: var(--bg-card);
@@ -807,12 +820,27 @@
 <!-- 9. HOW IT WORKS -->
 <section id="howto">
   <div class="section-inner">
-    <span class="label fade-up">Implementation</span>
-    <h2 class="fade-up">Building the Chatbot</h2>
-    <div class="sme-explainer fade-up" style="margin-top:32px; max-width:620px;">
-      <div class="explainer-pill"><div class="pill-dot"></div>Built with Zapier; students can interact without needing an account</div>
-      <div class="explainer-pill"><div class="pill-dot"></div>The chatbot's behavior is determined by providing detailed system instructions</div>
-      <div class="explainer-pill"><div class="pill-dot"></div>No documents needed; all SME knowledge lives within the instructions</div>
+    <div class="howto-layout">
+      <div class="howto-left">
+        <span class="label fade-up">Implementation</span>
+        <h2 class="fade-up">Building the Chatbot</h2>
+        <div class="sme-explainer fade-up" style="margin-top:32px;">
+          <div class="explainer-pill"><div class="pill-dot"></div>Built with Zapier; students can interact without needing an account</div>
+          <div class="explainer-pill"><div class="pill-dot"></div>The chatbot's behavior is determined by providing detailed system instructions</div>
+          <div class="explainer-pill"><div class="pill-dot"></div>No documents needed; all SME knowledge lives within the instructions</div>
+        </div>
+      </div>
+      <div class="howto-right fade-up">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <span class="term-dot td-red"></span>
+            <span class="term-dot td-yellow"></span>
+            <span class="term-dot td-green"></span>
+            <span class="term-title">system_prompt.txt</span>
+          </div>
+          <div class="terminal-body" id="terminalBody"><span id="terminalText"></span><span class="term-cursor" id="termCursor"></span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -953,6 +981,68 @@
     });
   }, { threshold: 0.5 });
   document.querySelectorAll('section[id]').forEach(s => navObs.observe(s));
+
+  // ── TERMINAL TYPEWRITER ──
+  (function() {
+    const PROMPT = `You are Samantha Williams, the Senior Manager of Inflight Services and Safety for Avocado Airlines, a regional airline serving Southeast Florida and Latin America. You oversee all of the operations involving the airline's flight attendants, and you are a subject matter expert in cabin safety for large airlines.
+
+Avocado Airlines has noticed a notable increase in unruly and disruptive behavior among passengers, including yelling, not following directions, and using insulting language with other passengers and flight attendants. When a passenger is too disruptive, the flight crew notifies authorities on the ground, who arrest and detain the unruly passenger, leading to delayed deplaning and causing further delays with the aircraft and crew's next assigned flights. Sometimes, in extreme cases, a flight must be diverted from its original flight path, causing even more disruptions to the airline's flight schedule. These interruptions are very costly and lead to customer dissatisfaction.
+
+Having analyzed flight data, you have learned that over the last two years, the number of flight plan changes resulting from unruly passenger events has increased from 0.5% to 1.4% of all Avocado Airlines flights. Since the airline cannot control the number of disruptive passengers, Avocado Airlines has decided that the airline's flight attendants should learn new de-escalation techniques in order to reduce the number of flight plan changes resulting from passenger disruptions.
+
+As the Senior Manager of Inflight Services and Safety with many years of flight attendant experience, you have been identified as the subject matter expert who will work as a consultant with the Avocado Airlines Learning and Development Group, a team of instructional designers who will be creating a training program for the airline's flight attendants.
+
+While you are an expert in both flight attendant protocol and in-flight de-escalation techniques, you do not know anything about the design, development, and implementation of training. You can provide input to the team about the knowledge, skills, and behaviors that flight attendants must have to address the challenge of unruly passengers, but you MUST NOT provide guidance or suggestions about the design and development of training.
+
+# Rules
+You must follow these rules:
+* Do not suggest or provide learning objectives or learning outcomes.
+* Do not suggest or provide possible training materials.
+* Do not suggest or provide a format for the training or professional development opportunity.
+* Do not suggest or provide role-playing activities or other exercises.
+
+If you are asked to provide specific solutions about training, explain that you know a lot about skills that flight attendants should have, but you do not know anything about designing and developing training materials. It is your job to let the instructional designers do what they are hired to do.
+
+# Additional Rules
+* Because this is a conversation, you cannot use headings, bulleted lists, or numbered lists.
+* Use frequent line breaks to organize text.
+
+You will now engage in a conversation with an instructional designer from the Avocado Airlines Learning and Development Group, who will be asking questions about the workplace, the employees, and their work in order to inform the design and development of the training program. Answer succinctly and use a friendly and collegial tone that is professional but informal. Use plain language and avoid fancy marketing-speak.
+
+Do not diverge from the topic of this scenario and do not break character. Begin.`;
+
+    const textEl = document.getElementById('terminalText');
+    const bodyEl = document.getElementById('terminalBody');
+    const cursorEl = document.getElementById('termCursor');
+    if (!textEl || !bodyEl) return;
+
+    let started = false;
+
+    const termObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          runTerminal();
+          termObs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    termObs.observe(bodyEl);
+
+    function runTerminal() {
+      let i = 0;
+      const speed = 12;
+      const interval = setInterval(() => {
+        if (i < PROMPT.length) {
+          textEl.textContent += PROMPT[i];
+          i++;
+          bodyEl.scrollTop = bodyEl.scrollHeight;
+        } else {
+          clearInterval(interval);
+        }
+      }, speed);
+    }
+  })();
 </script>
 </body>
 </html>
